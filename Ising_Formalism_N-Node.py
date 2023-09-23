@@ -17,9 +17,10 @@ def next_state_function(current_state_matrix, edge_matrix):
               ]
        node = random.randint(0, len(current_state)-1) #for async update
        current_state_matrix[node] = current_state_matrix_new_2[node] # for async 
-       current_state = list(chain.from_iterable(current_state_matrix))
+       current_state = list(chain.from_iterable(current_state_matrix)) # for async 
        return current_state_matrix #For async update
       #  return current_state_matrix_new_2 #For sync update
+
 def are_last_10_elements_same(lst):
     if len(lst) < 10:
         return False
