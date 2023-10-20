@@ -1,4 +1,5 @@
 import numpy as np
+import networkx as nx
 
 def generate_matrix(n, d):
     matrix = np.zeros((n, n), dtype=int)
