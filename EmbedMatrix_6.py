@@ -124,19 +124,6 @@ def simulate(density, node):
 
 
 #%%
-
-# for node in range(7,23,5):
-#     for density in tqdm(range(2,7,2)):
-#         list_of_percent_pure_states = []
-#         s = time.time()
-#         for i in range(100):
-#             list_of_percent_pure_states.append(simulate(density, node))
-#             print(list_of_percent_pure_states)
-#         e = time.time()
-#         print(f'Time Elapsed : {e - s}')
-#     np.savetxt(f'Results16O{node}N_{density}d.csv', list_of_percent_pure_states, delimiter=',')
-
-'''
 if __name__ == '__main__':
     for node in range(7,23,5):
         for density in tqdm(range(2,7,2)):
@@ -153,6 +140,5 @@ if __name__ == '__main__':
             #np.savetxt(f'./Results16O{node}N_{density}d.csv', list_of_percent_pure_states, delimiter=',')
             end = time.time()
             print(f"Time Elapsed:{end - start} ")
-
-'''
+            
 # %%
