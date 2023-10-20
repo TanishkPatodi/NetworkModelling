@@ -1,3 +1,8 @@
+'''
+Creates a list and checks if last n elemets are same
+This code was first succesful code, its redundant but does works. Several changes are made after this
+'''
+
 #%%
 # Importing libraries
 import numpy as np
@@ -35,10 +40,10 @@ def next_state_function_sync(current_state_matrix, edge_matrix):
        return current_state_matrix_new_2 #For sync update
 
 def are_last_10_elements_same(lst):
-    if len(lst) < 10:
+    if len(lst) < 70:
         return False
     
-    last_10_elements = lst[-10:]
+    last_10_elements = lst[-70:]
     return all(element == last_10_elements[0] for element in last_10_elements)
 # Function to embed a 2x2 matrix
 def embed_2x2(matrix, sub_matrix, row, col):
@@ -53,6 +58,8 @@ for density in range(2,4,2):
         list_of_percent_pure_states = []
         for q in tqdm(range(100)):
                 # Defining the sparse matrix
+
+                # matrix = [[ 0, -1,  0,  0, -1,  0, -1],        [-1,  0,  0, -1,  0,  0,  1],        [ 1,  0,  0,  0,  1, -1,  0],        [ 0,  1, -1,  0,  0,  0,  0],        [ 0,  0,  1,  1,  0,  1,  0],        [ 0,  1,  0,  1,  0,  0, -1],        [-1,  0,  0,  0, -1, -1,  0]]
                 matrix = np.zeros((6, 6), dtype=int)
                 for i in range(6):
                         indices = np.random.choice(6, density, replace=False) 
@@ -75,7 +82,7 @@ for density in range(2,4,2):
 
                 # Running simulations
                 # Obtaining combinations of 0 and 1 in integer format
-                int_combinations_tuple = list(product([-1, 1], repeat=6))
+                int_combinations_tuple = list(product([-1, 1], repeat=7))
                 # Convert the tuples to lists
                 int_combinations = [list(combination) for combination in int_combinations_tuple]
                 str_combinations = [','.join(map(str, combination)) for combination in int_combinations_tuple]
@@ -119,6 +126,7 @@ for density in range(2,4,2):
                 # result.to_csv('./Subset.csv')
                 filtered = result.values.sum()
                 percent_pure = filtered/6400
+                print(percent_pure)
                 list_of_percent_pure_states.append(percent_pure)
                 # print(result)
                 # print(list_of_percent_pure_states)

@@ -1,3 +1,13 @@
+'''
+This is a modified general code...
+some errors were resolved.
+
+Problem: 1> Async function had some issues...
+2>The definition of edge matrix is different and wrong.
+3> Ising formalism was misunderstood...
+'''
+
+
 #%%
 import numpy as np
 import pandas as pd
@@ -8,18 +18,20 @@ def next_state_function_Async(current_state_matrix, edge_matrix):
     current_state_matrix_new_2 = [[current_state_matrix[i][0] if element[0] == 0 
                                   else element[0]] 
                                   for i, element in enumerate(current_state_matrix_new)]
-    current_state_matrix_new = np.sign(current_state_matrix_new)
+    current_state_matrix_new_2 = np.sign(current_state_matrix_new_2)
     node = random.randint(0, len(current_state_matrix)-1)
     temp[node] = current_state_matrix_new_2[node] 
-        
+    temp = [item.tolist() if isinstance(item, np.ndarray) else item for item in temp]
+    # print(temp)
     return temp 
  
 def next_state_function_sync(current_state_matrix, edge_matrix):
        current_state_matrix_new = np.dot(edge_matrix, current_state_matrix)
-       current_state_matrix_new = np.sign(current_state_matrix_new)
        current_state_matrix_new_2 = [[current_state_matrix[i][0] if element[0] == 0 
                                   else element[0]] 
                                   for i, element in enumerate(current_state_matrix_new)]
+       current_state_matrix_new_2 = np.sign(current_state_matrix_new)
+       
        return current_state_matrix_new_2 #For sync update
  
 def are_last_10_elements_same(lst):
@@ -88,3 +100,4 @@ def simulate(density, node):
         percent_pure = filtered/total
         return percent_pure
  
+# %%

@@ -1,3 +1,8 @@
+'''
+Results dont match, multiple small errors
+Problem: taking list to check if last 10 elements are same, updated in later versions of the code.
+'''
+
 #%%
 import numpy as np
 from itertools import product, chain

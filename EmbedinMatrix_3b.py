@@ -1,14 +1,14 @@
 #%%
 import multiprocessing
 import time
-from EmbedmatrixFUNCs import *
+from NetworkModelling.Embedmatrix_3a import *
 #%%
 if __name__ == '__main__':
-    for node in range(6,23,5):
-        for density in range(2,7,2):
+    for node in range(7,9,5):
+        for density in range(2,3,2):
             start = time.time()
             list_of_percent_pure_states = []
-            pool = multiprocessing.Pool(processes=6)
+            pool = multiprocessing.Pool(processes=1)
             parameter = [(density, node)]*10
             list_of_percent_pure_states = pool.starmap(simulate, parameter)
             pool.close()
