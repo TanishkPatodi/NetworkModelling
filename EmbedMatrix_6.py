@@ -25,7 +25,7 @@ def increment_or_create_key(my_dict, key):
 
 # Function to embed a 2x2 matrix
 def embed_2x2(matrix, sub_matrix, row, col):
-        matrix[row:row+2, col:col+2] = sub_matrix
+        matrix[row:row+3, col:col+3] = sub_matrix
 
 def init_pool():
     np.random.seed(multiprocessing.current_process().pid)
@@ -49,6 +49,7 @@ def simulate(density, node):
         breakif = 300
         
 
+        '''
         # Create a directed graph from the adjacency matrix
         edge_matrix = generate_matrix(node, density)
         embed_matrix = np.full(shape=(2,2), fill_value= -1)
@@ -62,29 +63,29 @@ def simulate(density, node):
             embed_2x2(edge_matrix, embed_matrix, len(edge_matrix)-2, len(edge_matrix[1])-2)
             G = nx.DiGraph(edge_matrix)
         print(edge_matrix)
-
         '''
+        
         # To pass custom edge network
-        edge_matrix=np.array([[0, 0, 0, 1, 0, 0, 1, -1, 0, 0, 1, 0],
-                                [0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 1, -1],
-                                [0, -1, 0, 0, 0, 0, 0, -1, 1, -1, 0, 0],
-                                [0, 1, 0, 0, -1, 0, -1, 1, 0, 0, 0, 0],
-                                [-1, 0, 0, 0, 0, 0, 0, -1, 0, -1, 0, 1],
-                                [0, 0, 0, -1, 0, 0, 0, 0, 1, -1, -1, 0],
-                                [0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, -1],
-                                [0, -1, 0, -1, 0, 0, 0, 0, 0, 1, -1, 0],
-                                [-1, 0, 0, 0, 0, 1, 0, 0, 0, -1, 1, 0],
-                                [0, 0, 1, 0, 0, 1, 0, -1, 1, 0, 0, 0],
-                                [0, 0, 0, 1, 1, -1, 0, 0, 1, 0, 0, -1],
-                                [-1, 0, 1, 0, 0, -1, 1, 0, 0, 0, -1, 0]
-                                ])
-        '''
+        edge_matrix=np.array([[ 0, 0, 0, -1, 0, 0, 0],
+[ 0, 0, 0, 0, 0, -1, 0],
+[ 1, 0, 0, 0, 0, 0, 0],
+[ 0, 0, 0, 0, -1, 0, -1],
+[ 0, 0, 0, 0, 0, 0, 1],
+[ 1, 1, 0, 1, 0, 0, -1],
+[ 0, 0, -1, 0, 0, -1, 0]])
+        
+        # matt = np.load('../100 Random Matrices/7N-2D.npy')
 
-
+        # edge_matrix = np.array(matt[1])
+        print(edge_matrix)
         states = {}
+        combination = [-1,-1,-1,1,-1,1,-1]
+        print(np.matmul(edge_matrix, combination))
+        #%%
         for i in range(initial_conditions):
             # combination = np.random.choice([-1,1], size=(len(edge_matrix),1))
             combination = [random.choice([-1, 1]) for _ in range(len(edge_matrix))]
+            print(combination)
             x = 0
             limit = 1000
             while x < steadystate and limit > 0:
@@ -110,10 +111,10 @@ def simulate(density, node):
 
         states_df = pd.DataFrame(states.items(), columns=['States', 'Counts']).set_index('States')
         total = states_df.values.sum()
-        mask = states_df.index.str.endswith(',-1,1') | states_df.index.str.endswith(',1,-1')
+        mask = states_df.index.str.endswith(',-1.0,1.0') | states_df.index.str.endswith(',1.0,-1.0')
         result = states_df[mask]
         filtered = result.values.sum()
-        states_df.index = states_df.index.str.replace('-1','0')
+        # states_df.index = states_df.index.str.replace('-1','0')
         states_df['Fraction'] = states_df['Counts'].apply(lambda x: x/total)
         print(states_df)
         states_df.to_clipboard()
@@ -121,6 +122,7 @@ def simulate(density, node):
             percent_pure = filtered/total
             return percent_pure
             # print(percent_pure)
+#%%
 
 
 #%%

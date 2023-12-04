@@ -2,7 +2,7 @@
 
 For Running predefined matrices, for checking purposes.
 
-       Same code as previous.
+       Same code as previous - just multiprocessing removed.
 '''
 
 #%%
@@ -41,7 +41,7 @@ def generate_matrix(n, d):
     matrix.flat[indices] = np.random.choice([-1, 1], len(indices))
     return matrix
 #%%
-def simulate(density, node, matt, q):
+def simulate(density, node, q):
         
         # Parameters
         steadystate = 300
@@ -49,7 +49,6 @@ def simulate(density, node, matt, q):
         breakif = 300
 
         edge_matrix = np.array(matt[q])
-
         states = {}
         for i in range(initial_conditions):
             # combination = np.random.choice([-1,1], size=(len(edge_matrix),1))
@@ -77,42 +76,67 @@ def simulate(density, node, matt, q):
             if i == breakif and len(states)==0:
                 break
 
+
         states_df = pd.DataFrame(states.items(), columns=['States', 'Counts']).set_index('States')
         total = states_df.values.sum()
         mask = states_df.index.str.endswith(',-1.0,1.0') | states_df.index.str.endswith(',1.0,-1.0')
         result = states_df[mask]
         filtered = result.values.sum()
-        states_df.index = states_df.index.str.replace('-1','0')
-        states_df['Fraction'] = states_df['Counts'].apply(lambda x: x/total)
-        print(states_df)
+        # states_df.index = states_df.index.str.replace('-1','0')
+        # states_df['Fraction'] = states_df['Counts'].apply(lambda x: x/total)
+        # print(edge_matrix)
+        # print(states_df)
         # states_df.to_clipboard()
         if total > 0:
             percent_pure = filtered/total
             return percent_pure
             # print(percent_pure)
 
-#%%
-if __name__ == '__main__':
-    for node in range(7,23,5):
-        for density in tqdm(range(2,7,2)):
-            start = time.time()
-            list_of_percent_pure_states = []
 
-            matt = np.load(f'../100 Random Matrices/{node}N-{density}D.npy')
-
-            pool = multiprocessing.Pool(processes=1, initializer=init_pool)
-            parameter = [(density, node)]*100
-
-            parameter_new = [(density, node, i) for i, (density, node) in enumerate(parameter)]
-
-            list_of_percent_pure_states = pool.starmap(simulate, parameter_new)
-            pool.close()
-            pool.join()
-            print(list_of_percent_pure_states)
-            list_of_percent_pure_states = np.array(list_of_percent_pure_states)
-            filtered = list_of_percent_pure_states[~np.isnan(list_of_percent_pure_states)]
-            np.savetxt(f'./ResultsFIXED{node}N_{density}d.csv', list_of_percent_pure_states, delimiter=',')
-            end = time.time()
-            print(f"Time Elapsed:{end - start} ")
-            
+for node in range(7,10,5):
+    for density in range(2,4,2):
+        list_of_percent_pure_states = []
+        matt = np.load(f'../100 Random Matrices/{node}N-{density}D.npy')
+        for w in tqdm(range(100)):
+            list_of_percent_pure_states.append(simulate(node, density, w))
+        print(f'{node}N-{density}D : \n {list_of_percent_pure_states}')
+        start = time.time()
+        
+        
 # %%
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Assuming you have a DataFrame named 'df' in long format with columns 'Combination' and 'Percent_Pure'
+# For example:
+# df = pd.DataFrame({'Combination': ['A', 'B', 'C', 'A', 'B', 'C'],
+#                    'Percent_Pure': [30, 40, 50, 60, 70, 80]})
+
+df = pd.read_csv('./ResultAll_OptiMult.csv', sep=',')
+df = df.drop(df.columns[0], axis=1)
+df['Combination'] = df['Combination'].str.split('-R').str[0]
+#%%
+fig, ax = plt.subplots(figsize=(10,6))
+
+sns.boxplot(data=df, x='Combination', y='Percent Pure', showmeans = True)
+plt.xlabel('Nodes-Density')
+plt.xticks(rotation = 90)
+# %%
+# Calculate means
+means = df.groupby('Category')['Value'].mean()
+
+# Add mean lines
+for i, mean in enumerate(means):
+    plt.axhline(mean, color='red', linestyle='dashed', linewidth=1)
+    plt.text(i, mean, f'Mean={mean:.2f}', va='center', ha='center', color='red', fontsize=10)
+
+# Add labels and title
+plt.xlabel('Category')
+plt.ylabel('Value')
+plt.title('Boxplot with Means')
+
+# Show the plot
+plt.show()
